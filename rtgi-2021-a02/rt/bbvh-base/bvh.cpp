@@ -36,13 +36,7 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 	// todo
 	
 	// recursiv end : diffrenece between triangel is 1 
-	if(end-start ==1)
-	{
-		int index=nodes.size();
-		nodes.emplace_back();
-		nodes[index].triangle=start;
-		return index;
-	}
+
 
 
 	aabb box;
@@ -88,6 +82,28 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 			box.min.y=min.y;
 		if (box.min.z>min.z)
 			box.min.z=min.z;	
+	}
+
+
+
+		if(end-start ==1)
+	{
+
+
+
+		int index=nodes.size();
+		nodes.emplace_back();
+
+		nodes[index].box=box;
+		//nodes[index].left=NULL;
+		//nodes[index].right=NULL;
+
+		std::cout<<"index "<<index<<std::endl;
+
+
+		//nodes[index].triangle=start;
+
+		return index;
 	}
 
 

@@ -149,10 +149,15 @@ int main(int argc, char **argv)
 	vec3 vec=left.box.min;
 	std::cout<< "left_min : " << vec << std::endl;
 
+	for(int i=0; i<bhv.nodes.size();i++)
+	{
+		std::cout<<"node "<<i<<" box_min = " << bhv.nodes[i].box.min << " box_max = " <<bhv.nodes[i].box.max<<std::endl;
+	}
+
 
 
 	
-	parse_cmdline(argc, argv);
+	//parse_cmdline(argc, argv);
 
 	repl_update_checks uc;
 	if (cmdline.script != "") {
