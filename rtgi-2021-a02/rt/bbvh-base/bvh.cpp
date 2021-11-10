@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <chrono>
+#include <stack> 
 
 using namespace glm;
 
@@ -84,25 +85,12 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 			box.min.z=min.z;	
 	}
 
-
-
 		if(end-start ==1)
 	{
-
-
-
 		int index=nodes.size();
 		nodes.emplace_back();
 
 		nodes[index].box=box;
-		//nodes[index].left=NULL;
-		//nodes[index].right=NULL;
-
-		std::cout<<"index "<<index<<std::endl;
-
-
-		//nodes[index].triangle=start;
-
 		return index;
 	}
 
@@ -166,6 +154,24 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 }
 
 triangle_intersection naive_bvh::closest_hit(const ray &ray) {
+
+	//todo
+
+	std::stack  <int> stack;
+
+	//bool intersect(const aabb &box, const ray &ray, float &is)
+
+	//naive_bvh ::node root = nodes[0];
+
+	float t_min = FLT_MAX;
+
+	int i=root;
+	float is=0;
+
+
+	aabb box=nodes[i].box;
+
+	intersect(box,ray,is);
 
 
 	throw std::logic_error("Not implemented, yet");
