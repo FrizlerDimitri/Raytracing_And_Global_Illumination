@@ -376,7 +376,8 @@ main.o: main.cpp /usr/include/stdc-predef.h ../libgi/rt.h \
  /usr/lib/gcc/x86_64-linux-gnu/10/include/omp.h /usr/include/c++/10/mutex \
  /usr/include/c++/10/bits/std_mutex.h \
  /usr/include/c++/10/bits/unique_lock.h ../libgi/global-context.h \
- interaction.h cmdline.h /usr/include/glm/gtx/string_cast.hpp \
+ ../rt/bbvh-base/bvh.h interaction.h cmdline.h \
+ /usr/include/glm/gtx/string_cast.hpp \
  /usr/include/glm/gtc/type_precision.hpp \
  /usr/include/glm/gtc/quaternion.hpp /usr/include/glm/gtc/constants.hpp \
  /usr/include/glm/ext/scalar_constants.hpp \
@@ -912,6 +913,7 @@ main.o: main.cpp /usr/include/stdc-predef.h ../libgi/rt.h \
 /usr/include/c++/10/bits/std_mutex.h:
 /usr/include/c++/10/bits/unique_lock.h:
 ../libgi/global-context.h:
+../rt/bbvh-base/bvh.h:
 interaction.h:
 cmdline.h:
 /usr/include/glm/gtx/string_cast.hpp:

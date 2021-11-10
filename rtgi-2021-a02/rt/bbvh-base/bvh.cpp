@@ -13,8 +13,9 @@ using namespace glm;
 
 void naive_bvh::build(::scene *scene) {
 	this->scene = scene;
-	std::cout << "Building BVH..." << std::endl;
+	std::cout << "Building BVH..." << std::endl; 
 	auto t1 = std::chrono::high_resolution_clock::now();
+
 
 	root = subdivide(scene->triangles, scene->vertices, 0, scene->triangles.size());
 	
@@ -45,14 +46,50 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 
 
 	aabb box;
+	//box.max=vec3(-FLT_MAX, -FLT_MAX,-FLT_MAX);
+
 	for(int i=start;i<end; i++)
 	{
-		aabb other;
-		other.grow(vertices[triangles[i].a].pos);
-		other.grow(vertices[triangles[i].b].pos);
-		other.grow(vertices[triangles[i].b].pos);
-		box.grow(other);
+
+		float x1=vertices[triangles[i].a].pos.x;
+		float x2=vertices[triangles[i].b].pos.x;
+		float x3=vertices[triangles[i].c].pos.x;
+
+		float y1=vertices[triangles[i].a].pos.y;
+		float y2=vertices[triangles[i].b].pos.y;
+		float y3=vertices[triangles[i].c].pos.y;
+
+		float z1=vertices[triangles[i].a].pos.z;
+		float z2=vertices[triangles[i].b].pos.z;
+		float z3=vertices[triangles[i].c].pos.z;
+
+		float x_min=min(x1,min(x2,x3));
+		float x_max=max(x1,max(x2,x3));
+
+		float y_min=min(y1,min(y2,y3));
+		float y_max=max(y1,max(y2,y3));
+
+		float z_min=min(z1,min(z2,z3));
+		float z_max=max(z1,max(z2,z3));
+
+		vec3 min={x_min,y_min,z_min};
+		vec3 max= {x_max,y_max,z_max};
+
+		if (box.max.x<max.x)
+			box.max.x=max.x;
+		if (box.max.y<max.y)
+			box.max.y=max.y;
+		if (box.max.z<max.z)
+			box.max.z=max.z;
+
+		if (box.min.x>min.x)
+			box.min.x=min.x;
+		if (box.min.y>min.y)
+			box.min.y=min.y;
+		if (box.min.z>min.z)
+			box.min.z=min.z;	
 	}
+
 
 	vec3 axis_helper=box.max-box.min;
 	//find largest axis x,y or z to sort after it
@@ -84,9 +121,21 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 		});
 	}
 	
+
+	for (int i =0; i<triangles.size(); i++)
+	{
+		std::cout<< "triangle a  : " << triangles[i].a << std::endl;
+		std::cout<< "triangle c  : " << triangles[i].b << std::endl;
+		std::cout<< "triangle c  : " << triangles[i].c << std::endl;
+	}
+
+
 	int mid=start+(end-start)/2;
 	
 	int index= nodes.size();
+
+	std::cout<<"index: "<<index << ", mid "<<mid<<std::endl;
+
 	nodes.emplace_back();
 	int l=subdivide(triangles,vertices, start, mid);
 	int r=subdivide(triangles,vertices, mid, end);
@@ -101,7 +150,8 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 }
 
 triangle_intersection naive_bvh::closest_hit(const ray &ray) {
-	// todo
+
+
 	throw std::logic_error("Not implemented, yet");
 	return triangle_intersection();
 }

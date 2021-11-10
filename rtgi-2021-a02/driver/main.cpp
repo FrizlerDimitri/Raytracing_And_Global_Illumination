@@ -8,6 +8,8 @@
 
 #include "libgi/global-context.h"
 
+#include "rt/bbvh-base/bvh.h"
+
 #include "interaction.h"
 
 #include "cmdline.h"
@@ -21,6 +23,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/random.hpp>
+
 
 using namespace std;
 using namespace glm;
@@ -70,24 +73,83 @@ int main(int argc, char **argv)
 	//const aabb &box, const ray &ray, float &is
 
 
-	aabb box;
-	box.min=vec3{2,0,0};
-	box.max=vec3{6,4,0};
+	//aabb box;
+	//box.min=vec3{2,0,0};
+	//box.max=vec3{6,4,0};
 
-	vec3 o{0,0,0};
-	vec3 d{2,5,0};
-	ray ray{o,d};
+	//vec3 o{0,0,0};
+	//vec3 d{2,5,0};
+	//ray ray{o,d};
 
-	float is=0;
+	//float is=0;
 
-	bool b=intersect(box,ray,is);
+	//bool b=intersect(box,ray,is);
 
-	if(b)
-	{
-		cout<<"in box \n";
-	}else{
-		cout<<"not in box \n";
-	}
+	//if(b)
+	//{
+	//	cout<<"in box \n";
+	//}else{
+	//	cout<<"not in box \n";
+	//}
+
+
+
+	aabb scence_bounds;
+	scence_bounds.min=vec3(0,0,0);
+	scence_bounds.max=vec3(6,4,0);
+	
+	triangle t1;
+	t1.a=0;
+	t1.b=1;
+	t1.c=2;
+
+	triangle t2;
+	t2.a=3;
+	t2.b=4;
+	t2.c=5;
+
+	vertex v0;
+	v0.pos=vec3(1,1,0);
+
+	vertex v1;
+	v1.pos=vec3(1,2,0);
+
+	vertex v2;
+	v2.pos=vec3(2,1,0);
+
+	vertex v3;
+	v3.pos=vec3(4,2,0);
+
+	vertex v4;
+	v4.pos=vec3(4,3,0);
+
+
+	vertex v5;
+	v5.pos=vec3(5,2,0);
+
+
+	vector<triangle> triangels={t1,t2};
+	vector<vertex> vertexs={v0,v1,v2,v3,v4,v5};
+
+
+	scene scene;
+	scene.scene_bounds=scence_bounds;
+
+	scene.triangles=triangels;
+	scene.vertices=vertexs;
+	
+	
+	naive_bvh bhv;
+	bhv.build(&scene);
+
+
+	naive_bvh::node root = bhv.nodes[0];
+
+	naive_bvh::node left = bhv.nodes[root.left];
+	vec3 vec=left.box.min;
+	std::cout<< "left_min : " << vec << std::endl;
+
+
 
 	
 	parse_cmdline(argc, argv);
