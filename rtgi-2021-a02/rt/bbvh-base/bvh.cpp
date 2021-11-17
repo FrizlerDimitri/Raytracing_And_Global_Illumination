@@ -37,9 +37,6 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 	// todo
 	
 	// recursiv end : diffrenece between triangel is 1 
-
-
-
 	aabb box;
 	//box.max=vec3(-FLT_MAX, -FLT_MAX,-FLT_MAX);
 
@@ -160,18 +157,51 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 	std::stack  <int> stack;
 
 	//bool intersect(const aabb &box, const ray &ray, float &is)
-
 	//naive_bvh ::node root = nodes[0];
 
 	float t_min = FLT_MAX;
 
 	int i=root;
 	float is=0;
+	naive_bvh::node node= nodes[i];
 
 
-	aabb box=nodes[i].box;
+	//TODO while () ...
 
-	intersect(box,ray,is);
+	//aabb box=nodes[i].box;
+	//bool b = intersect(box,ray,is);
+
+
+
+
+			if(node.inner())
+			{
+				int leftIndex=node.left;
+				int rightIndex=node.right;
+
+				naive_bvh::node leftNode = nodes[leftIndex];
+				naive_bvh::node rightNode = nodes[rightIndex];
+
+
+				//has Ray hit left Node ? Yes Pust other Node to stack, if not check right Node 	
+				if(intersect(leftNode.box, ray, is))
+				{
+					stack.push(rightIndex);
+					node=leftNode;
+				}else if(intersect(rightNode.box,ray, is))
+				{
+					node=rightNode;
+				}
+			}else{
+
+				node.triangle
+
+			}
+
+	
+		
+
+
 
 
 	throw std::logic_error("Not implemented, yet");
