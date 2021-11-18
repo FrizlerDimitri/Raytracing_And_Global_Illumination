@@ -194,7 +194,7 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 				}
 			}else{
 
-				node.triangle
+				node.triangle;
 
 			}
 
