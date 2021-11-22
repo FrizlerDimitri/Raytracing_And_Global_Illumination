@@ -91,6 +91,7 @@ int main(int argc, char **argv)
 	//}else{
 	//	cout<<"not in box \n";
 	//}
+	int i =0;
 
 
 

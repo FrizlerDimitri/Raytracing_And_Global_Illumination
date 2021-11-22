@@ -6,7 +6,7 @@
 
 using namespace glm;
 using namespace std;
-//test
+
 //! Set up a camera ray using cam.up, cam.dir, cam.w, cam.h (see \ref camera::update_frustum)
 ray cam_ray(const camera &cam, int x, int y, vec2 offset) {
 	// find basis

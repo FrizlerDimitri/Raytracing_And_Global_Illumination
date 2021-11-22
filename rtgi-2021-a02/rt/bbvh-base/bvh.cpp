@@ -19,10 +19,23 @@ void naive_bvh::build(::scene *scene) {
 
 
 	root = subdivide(scene->triangles, scene->vertices, 0, scene->triangles.size());
+	std::cout<<"end"<<std::endl;
+
 	
 	auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 	std::cout << "Done after " << duration << "ms" << std::endl;
+
+
+
+
+	//test test test remove after test 
+
+	ray ray;
+	ray.o=vec3(0);
+	ray.d=vec3(5,3,0);
+
+	std::cout << "closest hit : "<< closest_hit(ray).t << std::endl;
 }
 
 
@@ -35,7 +48,7 @@ vec3 triangle_middle(vec3 a , vec3 b , vec3 c )
 
 uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vertex> &vertices, uint32_t start, uint32_t end) {
 	// todo
-	
+	std::cout<<"subdivide"<<std::endl;
 	// recursiv end : diffrenece between triangel is 1 
 	aabb box;
 	//box.max=vec3(-FLT_MAX, -FLT_MAX,-FLT_MAX);
@@ -153,59 +166,65 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 
 	//todo
+	triangle_intersection closest;
+	triangle_intersection intersection;
 
-	std::stack  <int> stack;
+	std::stack <int> stack;
 
-	//bool intersect(const aabb &box, const ray &ray, float &is)
-	//naive_bvh ::node root = nodes[0];
+	std::vector<triangle> triangles= scene->triangles;
+	std::vector<vertex> vertecies=scene->vertices;
 
-	float t_min = FLT_MAX;
+	stack.push(root);
 
-	int i=root;
-	float is=0;
-	naive_bvh::node node= nodes[i];
+		while (!stack.empty())
+		{
+			int i = stack.top();
+			stack.pop();
 
-
-	//TODO while () ...
-
-	//aabb box=nodes[i].box;
-	//bool b = intersect(box,ray,is);
-
-
-
+			naive_bvh::node node = nodes[i];
 
 			if(node.inner())
 			{
-				int leftIndex=node.left;
-				int rightIndex=node.right;
 
-				naive_bvh::node leftNode = nodes[leftIndex];
-				naive_bvh::node rightNode = nodes[rightIndex];
+				//has Ray hit left Node ? Yes Pust other Node to stack, if not check right Node 
+				float dist = FLT_MAX;
 
-
-				//has Ray hit left Node ? Yes Pust other Node to stack, if not check right Node 	
-				if(intersect(leftNode.box, ray, is))
+				if(intersect(node.box, ray, dist))
 				{
-					stack.push(rightIndex);
-					node=leftNode;
-				}else if(intersect(rightNode.box,ray, is))
-				{
-					node=rightNode;
-				}
+					// if dist <closesthit.t ? 
+					// why in soulution left first than right ? 
+					if(dist < closest.t)
+					{
+						stack.push(node.right);
+						stack.push(node.left);
+					}
+				} 
+
 			}else{
 
-				node.triangle;
+				int t_index=node.triangle;
+				triangle triangle = triangles[t_index];
 
+				//intersect(const triangle &t, const vertex *vertices, const ray &ray, triangle_intersection &info) 
+				// does the ray hit the triangle ? if hit than update t_min 
+				
+				bool hasRayHitTriangle=intersect(triangle, &vertecies[0], ray, intersection);
+				if(hasRayHitTriangle)
+				{
+					if(intersection.t < closest.t)
+					{
+						closest = intersection;
+						closest.ref=node.triangle;
+						//what is t in triangle_intersection ?
+					}
+				}
+				
 			}
-
+		}
 	
-		
-
-
-
-
-	throw std::logic_error("Not implemented, yet");
-	return triangle_intersection();
+	int i=0;
+	//throw std::logic_error("Not implemented, yet");
+	return closest;
 }
 
 
