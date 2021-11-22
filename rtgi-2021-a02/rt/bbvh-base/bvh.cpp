@@ -19,7 +19,7 @@ void naive_bvh::build(::scene *scene) {
 
 
 	root = subdivide(scene->triangles, scene->vertices, 0, scene->triangles.size());
-	std::cout<<"end"<<std::endl;
+
 
 	
 	auto t2 = std::chrono::high_resolution_clock::now();
@@ -36,6 +36,8 @@ void naive_bvh::build(::scene *scene) {
 	ray.d=vec3(5,3,0);
 
 	std::cout << "closest hit : "<< closest_hit(ray).t << std::endl;
+
+	std::cout << "end of build!"<<std::endl;
 }
 
 
@@ -48,7 +50,7 @@ vec3 triangle_middle(vec3 a , vec3 b , vec3 c )
 
 uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vertex> &vertices, uint32_t start, uint32_t end) {
 	// todo
-	std::cout<<"subdivide"<<std::endl;
+	//std::cout<<"subdivide"<<std::endl;
 	// recursiv end : diffrenece between triangel is 1 
 	aabb box;
 	//box.max=vec3(-FLT_MAX, -FLT_MAX,-FLT_MAX);
@@ -136,19 +138,19 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 	}
 	
 
-	for (int i =0; i<triangles.size(); i++)
-	{
-		std::cout<< "triangle a  : " << triangles[i].a << std::endl;
-		std::cout<< "triangle c  : " << triangles[i].b << std::endl;
-		std::cout<< "triangle c  : " << triangles[i].c << std::endl;
-	}
+	//for (int i =0; i<triangles.size(); i++)
+	//{
+	//	std::cout<< "triangle a  : " << triangles[i].a << std::endl;
+	//	std::cout<< "triangle c  : " << triangles[i].b << std::endl;
+	//	std::cout<< "triangle c  : " << triangles[i].c << std::endl;
+	//}
 
 
 	int mid=start+(end-start)/2;
 	
 	int index= nodes.size();
 
-	std::cout<<"index: "<<index << ", mid "<<mid<<std::endl;
+	//std::cout<<"index: "<<index << ", mid "<<mid<<std::endl;
 
 	nodes.emplace_back();
 	int l=subdivide(triangles,vertices, start, mid);
@@ -174,11 +176,14 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 	std::vector<triangle> triangles= scene->triangles;
 	std::vector<vertex> vertecies=scene->vertices;
 
-	stack.push(root);
+		stack.push(root);
+		int count=0;
 
 		while (!stack.empty())
 		{
 			int i = stack.top();
+
+			std::cout<<"stack position :"<<i<<std::endl;
 			stack.pop();
 
 			naive_bvh::node node = nodes[i];
@@ -187,20 +192,28 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 			{
 
 				//has Ray hit left Node ? Yes Pust other Node to stack, if not check right Node 
-				float dist = FLT_MAX;
+				//float dist = FLT_MAX;
+				float dist;
 
 				if(intersect(node.box, ray, dist))
 				{
 					// if dist <closesthit.t ? 
 					// why in soulution left first than right ? 
 					if(dist < closest.t)
-					{
-						stack.push(node.right);
-						stack.push(node.left);
+					{	
+						
+
+						if(node.right != 0)
+							stack.push(node.right);
+						if(node.left != 0)	
+							stack.push(node.left);
+						//std::cout<<"push"<<std::endl;
 					}
 				} 
 
 			}else{
+
+				std::cout<<"were aufgerufen "<<std::endl;
 
 				int t_index=node.triangle;
 				triangle triangle = triangles[t_index];
@@ -222,7 +235,6 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 			}
 		}
 	
-	int i=0;
 	//throw std::logic_error("Not implemented, yet");
 	return closest;
 }
