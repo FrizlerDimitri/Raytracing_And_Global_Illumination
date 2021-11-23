@@ -296,8 +296,10 @@ bvh2.o: bvh2.cpp /usr/include/stdc-predef.h bvh.h ../../libgi/scene.h \
  /usr/include/c++/10/bits/locale_facets.tcc \
  /usr/include/c++/10/bits/basic_ios.tcc \
  /usr/include/c++/10/bits/ostream.tcc ../../libgi/intersect.h \
- ../../libgi/material.h /usr/include/c++/10/tuple \
- /usr/include/c++/10/array /usr/include/c++/10/bits/uses_allocator.h \
+ /usr/include/c++/10/iostream /usr/include/c++/10/istream \
+ /usr/include/c++/10/bits/istream.tcc ../../libgi/material.h \
+ /usr/include/c++/10/tuple /usr/include/c++/10/array \
+ /usr/include/c++/10/bits/uses_allocator.h \
  /usr/include/c++/10/bits/invoke.h /usr/include/c++/10/vector \
  /usr/include/c++/10/bits/stl_uninitialized.h \
  /usr/include/c++/10/bits/stl_vector.h \
@@ -322,7 +324,6 @@ bvh2.o: bvh2.cpp /usr/include/stdc-predef.h bvh.h ../../libgi/scene.h \
  /usr/include/c++/10/bits/locale_conv.h \
  /usr/include/c++/10/bits/unique_ptr.h /usr/include/c++/10/iomanip \
  /usr/include/c++/10/bits/quoted_string.h /usr/include/c++/10/sstream \
- /usr/include/c++/10/istream /usr/include/c++/10/bits/istream.tcc \
  /usr/include/c++/10/bits/sstream.tcc /usr/include/c++/10/codecvt \
  /usr/include/c++/10/ext/concurrence.h \
  /usr/include/c++/10/bits/shared_ptr.h \
@@ -343,8 +344,7 @@ bvh2.o: bvh2.cpp /usr/include/stdc-predef.h bvh.h ../../libgi/scene.h \
  /usr/include/c++/10/unordered_map /usr/include/c++/10/bits/hashtable.h \
  /usr/include/c++/10/bits/hashtable_policy.h \
  /usr/include/c++/10/bits/unordered_map.h \
- /usr/include/c++/10/pstl/execution_defs.h /usr/include/c++/10/iostream \
- /usr/include/c++/10/fstream \
+ /usr/include/c++/10/pstl/execution_defs.h /usr/include/c++/10/fstream \
  /usr/include/x86_64-linux-gnu/c++/10/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/10/bits/c++io.h \
  /usr/include/c++/10/bits/fstream.tcc \
@@ -760,6 +760,9 @@ bvh.h:
 /usr/include/c++/10/bits/basic_ios.tcc:
 /usr/include/c++/10/bits/ostream.tcc:
 ../../libgi/intersect.h:
+/usr/include/c++/10/iostream:
+/usr/include/c++/10/istream:
+/usr/include/c++/10/bits/istream.tcc:
 ../../libgi/material.h:
 /usr/include/c++/10/tuple:
 /usr/include/c++/10/array:
@@ -798,8 +801,6 @@ bvh.h:
 /usr/include/c++/10/iomanip:
 /usr/include/c++/10/bits/quoted_string.h:
 /usr/include/c++/10/sstream:
-/usr/include/c++/10/istream:
-/usr/include/c++/10/bits/istream.tcc:
 /usr/include/c++/10/bits/sstream.tcc:
 /usr/include/c++/10/codecvt:
 /usr/include/c++/10/ext/concurrence.h:
@@ -828,7 +829,6 @@ bvh.h:
 /usr/include/c++/10/bits/hashtable_policy.h:
 /usr/include/c++/10/bits/unordered_map.h:
 /usr/include/c++/10/pstl/execution_defs.h:
-/usr/include/c++/10/iostream:
 /usr/include/c++/10/fstream:
 /usr/include/x86_64-linux-gnu/c++/10/bits/basic_file.h:
 /usr/include/x86_64-linux-gnu/c++/10/bits/c++io.h:

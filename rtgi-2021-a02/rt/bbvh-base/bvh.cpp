@@ -32,14 +32,18 @@ void naive_bvh::build(::scene *scene) {
 	//test test test remove after test 
 
 	ray ray;
-	ray.o=vec3(0);
-	ray.d=vec3(5,3,0);
+	ray.o=vec3(0,0,0);
+	ray.d=vec3(6,4,0);
 
-	std::cout << "closest hit : "<< closest_hit(ray).t << std::endl;
+
+	triangle_intersection inter = closest_hit(ray);
+
+	std::cout << "closest hit t : "<< inter.t << std::endl;
+	std::cout << "closest hit beta : "<< inter.beta << std::endl;
+	std::cout << "closest hit gamma : "<<inter.gamma <<std::endl;
 
 	std::cout << "end of build!"<<std::endl;
 }
-
 
 
 vec3 triangle_middle(vec3 a , vec3 b , vec3 c )
@@ -101,6 +105,7 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 	{
 		int index=nodes.size();
 		nodes.emplace_back();
+		nodes[index].triangle=start;
 
 		nodes[index].box=box;
 		return index;
@@ -161,8 +166,8 @@ uint32_t naive_bvh::subdivide(std::vector<triangle> &triangles, std::vector<vert
 
 	return index;
 	
-	//throw std::logic_error("Not implemented, yet");
-	//return 0;
+	// throw std::logic_error("Not implemented, yet");
+	// return 0;
 }
 
 triangle_intersection naive_bvh::closest_hit(const ray &ray) {
@@ -176,6 +181,14 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 	std::vector<triangle> triangles= scene->triangles;
 	std::vector<vertex> vertecies=scene->vertices;
 
+	// 	for(vertex v : vertecies)
+	// {
+	// 	std::cout << v.pos << std::endl;
+	// }
+
+
+
+
 		stack.push(root);
 		int count=0;
 
@@ -188,7 +201,8 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 
 			naive_bvh::node node = nodes[i];
 
-			if(node.inner())
+			//if(node.inner())
+			if(!(node.left ==0 && node.right == 0))
 			{
 
 				//has Ray hit left Node ? Yes Pust other Node to stack, if not check right Node 
@@ -201,8 +215,6 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 					// why in soulution left first than right ? 
 					if(dist < closest.t)
 					{	
-						
-
 						if(node.right != 0)
 							stack.push(node.right);
 						if(node.left != 0)	
@@ -213,23 +225,34 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 
 			}else{
 
-				std::cout<<"were aufgerufen "<<std::endl;
 
 				int t_index=node.triangle;
 				triangle triangle = triangles[t_index];
+				std::cout<<"Triangel "<<std::endl;
+				std::cout << vertecies[triangle.a].pos << std::endl;
+				std::cout << vertecies[triangle.b].pos << std::endl;
+				std::cout << vertecies[triangle.c].pos << std::endl;
+				std::cout <<"ray.o = " << ray.o << std::endl;
+				std::cout << "ray.d = "<<ray.d <<std:: endl;
+
+				std::cout<< "triangel : "<< t_index<<std::endl;
+
 
 				//intersect(const triangle &t, const vertex *vertices, const ray &ray, triangle_intersection &info) 
 				// does the ray hit the triangle ? if hit than update t_min 
 				
-				bool hasRayHitTriangle=intersect(triangle, &vertecies[0], ray, intersection);
+				bool hasRayHitTriangle=intersect(triangle, scene->vertices.data(), ray, intersection);
 				if(hasRayHitTriangle)
 				{
+					std::cout<<"ray has hit triangele "<<std::endl;
 					if(intersection.t < closest.t)
 					{
 						closest = intersection;
 						closest.ref=node.triangle;
 						//what is t in triangle_intersection ?
 					}
+				}else {
+					std::cout<<"ray has not hit triangele "<<std::endl;
 				}
 				
 			}

@@ -91,7 +91,6 @@ int main(int argc, char **argv)
 	//}else{
 	//	cout<<"not in box \n";
 	//}
-	int i =0;
 
 
 
@@ -140,14 +139,26 @@ int main(int argc, char **argv)
 	scene.vertices=vertexs;
 	
 	
+
 	naive_bvh bhv;
 	bhv.build(&scene);
 
 
-	naive_bvh::node root = bhv.nodes[0];
 
-	naive_bvh::node left = bhv.nodes[root.left];
-	vec3 vec=left.box.min;
+
+
+	
+
+	// //for(vertex v : vertexs)
+	// //{
+	// //	std::cout << v.pos << std::endl;
+	// //}
+
+
+	// naive_bvh::node root = bhv.nodes[0];
+
+	// naive_bvh::node left = bhv.nodes[root.left];
+	// vec3 vec=left.box.min;
 	//std::cout<< "left_min : " << vec << std::endl;
 
 	//for(int i=0; i<bhv.nodes.size();i++)
@@ -158,18 +169,18 @@ int main(int argc, char **argv)
 
 
 	
-	//parse_cmdline(argc, argv);
+	// parse_cmdline(argc, argv);
 
-	repl_update_checks uc;
-	if (cmdline.script != "") {
-		ifstream script(cmdline.script);
-		repl(script, uc);
-	}
-	if (cmdline.interact)
-		repl(cin, uc);
+	// repl_update_checks uc;
+	// if (cmdline.script != "") {
+	// 	ifstream script(cmdline.script);
+	// 	repl(script, uc);
+	// }
+	// if (cmdline.interact)
+	// 	repl(cin, uc);
 
-	stats_timer.print();
+	// stats_timer.print();
 
-	delete rc->algo;
+	// delete rc->algo;
 	return 0;
 }

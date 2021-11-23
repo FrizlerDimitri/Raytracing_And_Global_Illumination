@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rt.h"
+#include <iostream>
 
 struct aabb {
 	vec3 min, max;
@@ -52,9 +53,18 @@ inline bool intersect(const triangle &t, const vertex *vertices, const ray &ray,
 	float gamma   = i * common1  +  h * common2  +  g * common3;
 	float tt    = -(f * common1  +  e * common2  +  d * common3);
 
+
+	
+
 	beta /= M;
 	gamma /= M;
 	tt /= M;
+
+	std::cout<<"Ray Triangle Intersection"<<std::endl;
+	std::cout<<"M = "<<M<<std::endl;
+	std::cout<<"beta = "<<beta<<std::endl;
+	std::cout<<"gamma = "<<gamma<<std::endl;
+	std::cout<<"tt = "<<tt<<std::endl;
 
 	if (tt > ray.t_min && tt < ray.t_max)
 		if (beta > 0 && gamma > 0 && beta + gamma <= 1)
@@ -164,3 +174,171 @@ inline bool intersect4(const aabb &box, const ray &ray, float &is) {
 	return false;
 }
 
+
+
+//--------------------------------------------------------------------------------------------------
+
+
+inline float det3x3(float m [3][3]){
+	//rule of sarrus
+	float ret=0;
+	//for (int i=0 ; i<3;i++)
+	//{
+	//	for(int j=0; j<3;j++)
+	//		{
+	//		std::cout<<" " << m[i][j]<<"";
+	//	}
+	//	std::cout<<"\n";
+	//}
+
+	ret =	
+		m[0][0]*m[1][1]*m[2][2] 
+	+
+		m[0][1]*m[1][2]*m[2][0] 
+
+	+	m[0][2]*m[1][0]*m[2][1]
+
+	-   m[2][0]*m[1][1]*m[0][2] 
+
+	-   m[2][1]*m[1][2]*m[0][0] 
+
+	-   m[2][2]*m[1][0]*m[0][1] ;
+
+	//std::cout<<"det : "<<ret<<"\n";
+
+	return ret;
+}
+
+
+inline bool intersectDimitri(const triangle &t, const vertex *vertices, const ray &ray, triangle_intersection &info) {
+	// todo
+	
+
+	vec3 a=vertices[t.a].pos;
+	vec3 b=vertices[t.b].pos;
+	vec3 c=vertices[t.c].pos;
+
+	float a_x=a.x;
+	float a_y=a.y;
+	float a_z=a.z;
+	std::cout<<"A { " << a_x<<" , "<< a_y <<" , " << a_z <<"}\n";
+	 
+	float b_x=b.x;
+	float b_y=b.y;
+	float b_z=b.z;
+	std::cout<<"B { " << b_x<<" , "<< b_y <<" , " << b_z <<"}\n";
+
+	float c_x=c.x;
+	float c_y=c.y;
+	float c_z=c.z;
+	std::cout<<"C { " << c_x<<" , "<< c_y <<" , " << c_z <<"}\n";
+
+	vec3 o=ray.o;
+	float o_x=o.x;
+	float o_y=o.y;
+	float o_z=o.z;
+	std::cout<<"o { " << o_x<<" , "<< o_y <<" , " << o_z <<"}\n";
+
+	vec3 d=ray.d;
+	float d_x=d.x;
+	float d_y=d.y;
+	float d_z=d.z;
+	std::cout<<"d { " << d_x<<" , "<< d_y <<" , " << d_z <<"}\n";
+
+	//solution of x
+	float beta=info.beta;
+	float gamma=info.gamma;
+	float t1=info.t;
+
+	float matrixA[3][3]={
+		{a_x-b_x   , a_x-c_x   ,   d_x},
+		{a_y-b_y   , a_y-c_y   ,   d_y},
+		{a_z-b_z   , a_z-c_z   ,   d_z}
+
+	}; 
+
+	float Matrix_b[3]={
+		{ a_x-o_x },
+		{ a_y-o_y },
+		{ a_z-o_z }
+	};
+
+	float detA=det3x3(matrixA);
+	std::cout<<"detA : "<<detA<<std::endl;
+
+
+	//rule of cramer
+	float matrixBeta [3][3]= {
+		{Matrix_b[0] , a_x-c_x   ,d_x },
+		{Matrix_b[1] , a_y-c_y   ,d_y },
+		{Matrix_b[2] , a_z-c_z   ,d_z }
+	}; 
+
+
+	float matrixGamma[3][3]={
+		{a_x-b_x   , Matrix_b[0]  ,    d_x},
+		{a_y-b_y   , Matrix_b[1]   ,   d_y},
+		{a_z-b_z   , Matrix_b[2]   ,   d_z}
+
+	}; 
+
+	float matrixT[3][3]={
+		{a_x-b_x   , a_x-c_x   ,   Matrix_b[0]},
+		{a_y-b_y   , a_y-c_y   ,   Matrix_b[1]},
+		{a_z-b_z   , a_z-c_z   ,   Matrix_b[2]}
+	}; 
+	
+	beta = det3x3(matrixBeta)/detA;
+	std::cout<<"beta : "<<beta<<"\n";
+
+	gamma=det3x3(matrixGamma)/detA;
+	std::cout<<"gamma : "<<gamma<<"\n";
+
+	t1=det3x3(matrixT)/detA;
+	std::cout<<"t: "<<t1<<"\n";
+
+	
+
+	//if(t1 > ray.t_min && t1 < ray.t_max)
+	//{
+	//	if(beta > 0 && gamma > 0 && beta+gamma <=1)
+	//	{
+	//		info.t=t1;
+	//		info.beta=beta;
+	//		info.gamma=gamma;
+	//		return true;
+	//	}
+	//}
+	//std::cout<<"Matrix should compute here \n";
+
+
+	//std::cout<< "tmin " <<ray.t_min<<"\n";
+	//std::cout<< "tmax " <<ray.t_max<<"\n";
+	if(t1<ray.t_min || t1>ray.t_max)
+	{
+		//std::cout<<"Here 1 "<< t1 <<"\n";
+		return false;
+	}
+
+	if(gamma<0 || gamma>1)
+	{
+		//std::cout<<"Here 2 "<< t1 <<"\n";
+		return false;
+	}
+
+	if(beta<0 || beta > 1-gamma)
+	{	
+		//std::cout<<"Here 3 "<< beta <<"\n";
+		return false;
+	}
+
+
+	std::cout << "t : " << t1<<std::endl;
+	std::cout << "beta: " << beta<<std::endl;
+	std::cout << "gamma : " << gamma<<std::endl;
+
+	info.t=t1;
+	info.beta=beta;
+	info.gamma=gamma;
+	return true;
+}	
