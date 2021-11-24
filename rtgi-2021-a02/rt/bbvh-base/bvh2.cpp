@@ -192,15 +192,49 @@ typename std::enable_if<LO!=bbvh_triangle_layout::flat,void>::type binary_bvh_tr
 template<bbvh_triangle_layout tr_layout, bbvh_esc_mode esc_mode>
 uint32_t binary_bvh_tracer<tr_layout, esc_mode>::subdivide_om(std::vector<prim> &prims, std::vector<uint32_t> &index, uint32_t start, uint32_t end) {
 
-	// todo
+assert(start < end);
+	auto p = [&](uint32_t i) { return prims[index[i]]; };
 
-	std::vector<triangle> triangles = scene->triangles;
-	std::vector<vertex>   verticies = scene->vertices;
-	
+	// Rekursionsabbruch: Nur noch ein Dreieck in der Liste
+	if (end-start <= max_triangles_per_node) {
+		uint32_t id = nodes.size();
+		nodes.emplace_back();
+		nodes[id].tri_offset(start);
+		nodes[id].tri_count(end - start);
+		return id;
+	}
 
+	// Bestimmen der Bounding Box der (Teil-)Szene
+	aabb box;
+	for (int i = start; i < end; ++i)
+		box.grow(p(i));
 
-	std::logic_error("Not implemented, yet");
-	return 0;
+	// Sortieren nach der größten Achse
+	vec3 extent = box.max - box.min;
+	float largest = max(extent.x, max(extent.y, extent.z));
+	if (largest == extent.x)
+		std::sort(index.data()+start, index.data()+end,
+				  [&](uint32_t a, uint32_t b) { return prims[a].center().x < prims[b].center().x; });
+	else if (largest == extent.y)
+		std::sort(index.data()+start, index.data()+end,
+				  [&](uint32_t a, uint32_t b) { return prims[a].center().y < prims[b].center().y; });
+	else 
+		std::sort(index.data()+start, index.data()+end,
+				  [&](uint32_t a, uint32_t b) { return prims[a].center().z < prims[b].center().z; });
+
+	// In der Mitte zerteilen
+	int mid = start + (end-start)/2;
+	uint32_t id = nodes.size();
+	nodes.emplace_back();
+	uint32_t l = subdivide_om(prims, index, start, mid);
+	uint32_t r = subdivide_om(prims, index, mid,   end);
+	nodes[id].link_l = l;
+	nodes[id].link_r = r;
+	for (int i = start; i < mid; ++i) nodes[id].box_l.grow(p(i));
+	for (int i = mid;   i < end; ++i) nodes[id].box_r.grow(p(i));
+	return id;
+	// std::logic_error("Not implemented, yet");
+	// return 0;
 }
 
 template<bbvh_triangle_layout tr_layout, bbvh_esc_mode esc_mode>
@@ -220,6 +254,8 @@ uint32_t binary_bvh_tracer<tr_layout, esc_mode>::subdivide_sah(std::vector<prim>
 template<bbvh_triangle_layout tr_layout, bbvh_esc_mode esc_mode>
 triangle_intersection binary_bvh_tracer<tr_layout, esc_mode>::closest_hit(const ray &ray) {
 	time_this_block(closest_hit);
+
+	
 	// todo
 	std::logic_error("Not implemented, yet");
 	return triangle_intersection();
