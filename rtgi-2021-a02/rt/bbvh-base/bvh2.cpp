@@ -191,7 +191,14 @@ typename std::enable_if<LO!=bbvh_triangle_layout::flat,void>::type binary_bvh_tr
 
 template<bbvh_triangle_layout tr_layout, bbvh_esc_mode esc_mode>
 uint32_t binary_bvh_tracer<tr_layout, esc_mode>::subdivide_om(std::vector<prim> &prims, std::vector<uint32_t> &index, uint32_t start, uint32_t end) {
+
 	// todo
+
+	std::vector<triangle> triangles = scene->triangles;
+	std::vector<vertex>   verticies = scene->vertices;
+	
+
+
 	std::logic_error("Not implemented, yet");
 	return 0;
 }

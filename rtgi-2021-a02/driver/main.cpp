@@ -118,14 +118,14 @@ int main(int argc, char **argv)
 	v2.pos=vec3(2,1,0);
 
 	vertex v3;
-	v3.pos=vec3(4,2,0);
+	v3.pos=vec3(1,1,1);
 
 	vertex v4;
-	v4.pos=vec3(4,3,0);
+	v4.pos=vec3(1,2,1);
 
 
 	vertex v5;
-	v5.pos=vec3(5,2,0);
+	v5.pos=vec3(2,1,1);
 
 
 	vector<triangle> triangels={t1,t2};
@@ -143,11 +143,6 @@ int main(int argc, char **argv)
 	naive_bvh bhv;
 	bhv.build(&scene);
 
-
-
-
-
-	
 
 	// //for(vertex v : vertexs)
 	// //{

@@ -29,20 +29,16 @@ void naive_bvh::build(::scene *scene) {
 
 
 
-	//test test test remove after test 
+//------------------------------------------------test test test remove after test------------------------------------------------------------------------------------- 
+//	ray ray;
+//	ray.o=vec3(1.2,1.2,-1);
+//	ray.d=vec3(0,0,11);
 
-	ray ray;
-	ray.o=vec3(0,0,0);
-	ray.d=vec3(6,4,0);
+//	triangle_intersection inter = closest_hit(ray);
+//	std::cout << "closest hit t : "<< inter.t << std::endl;
+//	std::cout << "closest hit beta : "<< inter.beta << std::endl;
+//	std::cout << "closest hit gamma : "<<inter.gamma <<std::endl;
 
-
-	triangle_intersection inter = closest_hit(ray);
-
-	std::cout << "closest hit t : "<< inter.t << std::endl;
-	std::cout << "closest hit beta : "<< inter.beta << std::endl;
-	std::cout << "closest hit gamma : "<<inter.gamma <<std::endl;
-
-	std::cout << "end of build!"<<std::endl;
 }
 
 
@@ -185,9 +181,6 @@ triangle_intersection naive_bvh::closest_hit(const ray &ray) {
 	// {
 	// 	std::cout << v.pos << std::endl;
 	// }
-
-
-
 
 		stack.push(root);
 		int count=0;
