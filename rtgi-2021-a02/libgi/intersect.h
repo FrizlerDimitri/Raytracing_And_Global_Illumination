@@ -80,9 +80,6 @@ inline bool intersect(const triangle &t, const vertex *vertices, const ray &ray,
 
 
 inline bool intersect(const aabb &box, const ray &ray, float &is) {
-	// todo
-
-	
 
 	vec3 Min=box.min;
 	vec3 Max=box.max;
@@ -159,19 +156,111 @@ inline bool intersect(const aabb &box, const ray &ray, float &is) {
 }
 
 inline bool intersect2(const aabb &box, const ray &ray, float &is) {
-	// todo
-	return false;
+	// todo	
+	//return false;
+	//10. Raytracing 221 - 222
+	float t1x_tmp = (box.min.x - ray.o.x) / ray.d.x;
+	float t2x_tmp = (box.max.x - ray.o.x) / ray.d.x;
+	float t1x = (t1x_tmp < t2x_tmp) ? t1x_tmp : t2x_tmp;
+	float t2x = (t2x_tmp < t1x_tmp) ? t1x_tmp : t2x_tmp;
+
+	float t1y_tmp = (box.min.y - ray.o.y) / ray.d.y;
+	float t2y_tmp = (box.max.y - ray.o.y) / ray.d.y;
+	float t1y = (t1y_tmp < t2y_tmp) ? t1y_tmp : t2y_tmp;
+	float t2y = (t2y_tmp < t1y_tmp) ? t1y_tmp : t2y_tmp;
+
+	float t1z_tmp = (box.min.z - ray.o.z) / ray.d.z;
+	float t2z_tmp = (box.max.z - ray.o.z) / ray.d.z;
+	float t1z = (t1z_tmp < t2z_tmp) ? t1z_tmp : t2z_tmp;
+	float t2z = (t2z_tmp < t1z_tmp) ? t1z_tmp : t2z_tmp;
+
+	float t1 = (t1x < t1y) ? t1y : t1x;
+	      t1 = (t1z < t1 ) ? t1  : t1z;
+	float t2 = (t2x < t2y) ? t2x : t2y;
+	      t2 = (t2z < t2 ) ? t2z : t2;
+		
+	if (t1 > t2)        return false;
+	if (t2 < ray.t_min)	return false;
+	if (t1 > ray.t_max) return false;
+	
+	is = t1;
+	return true;
+
 }
 
 
 inline bool intersect3(const aabb &box, const ray &ray, float &is) {
 	// todo
-	return false;
+	//return false;
+
+
+	// Das bring wirklich was ??? 
+	float idx = 1.0f / ray.d.x;
+	float idy = 1.0f / ray.d.y;
+	float idz = 1.0f / ray.d.z;
+
+	float t1x_tmp = (box.min.x - ray.o.x) * idx;
+	float t2x_tmp = (box.max.x - ray.o.x) * idx;
+	float t1x = (t1x_tmp < t2x_tmp) ? t1x_tmp : t2x_tmp;
+	float t2x = (t2x_tmp < t1x_tmp) ? t1x_tmp : t2x_tmp;
+
+	float t1y_tmp = (box.min.y - ray.o.y) * idy;
+	float t2y_tmp = (box.max.y - ray.o.y) * idy;
+	float t1y = (t1y_tmp < t2y_tmp) ? t1y_tmp : t2y_tmp;
+	float t2y = (t2y_tmp < t1y_tmp) ? t1y_tmp : t2y_tmp;
+
+	float t1z_tmp = (box.min.z - ray.o.z) * idz;
+	float t2z_tmp = (box.max.z - ray.o.z) * idz;
+	float t1z = (t1z_tmp < t2z_tmp) ? t1z_tmp : t2z_tmp;
+	float t2z = (t2z_tmp < t1z_tmp) ? t1z_tmp : t2z_tmp;
+
+	float t1 = (t1x < t1y) ? t1y : t1x;
+	      t1 = (t1z < t1 ) ? t1  : t1z;
+	float t2 = (t2x < t2y) ? t2x : t2y;
+	      t2 = (t2z < t2 ) ? t2z : t2;
+		
+	if (t1 > t2)        return false;
+	if (t2 < ray.t_min) return false;
+	if (t1 > ray.t_max) return false;
+	
+	is = t1;
+	return true;
+
+
 }
 
 inline bool intersect4(const aabb &box, const ray &ray, float &is) {
-	// todo
-	return false;
+
+	float idx = ray.id.x;
+	float idy = ray.id.y;
+	float idz = ray.id.z;
+
+	float t1x_tmp = (box.min.x - ray.o.x) * idx;
+	float t2x_tmp = (box.max.x - ray.o.x) * idx;
+	float t1x = (t1x_tmp < t2x_tmp) ? t1x_tmp : t2x_tmp;
+	float t2x = (t2x_tmp < t1x_tmp) ? t1x_tmp : t2x_tmp;
+
+	float t1y_tmp = (box.min.y - ray.o.y) * idy;
+	float t2y_tmp = (box.max.y - ray.o.y) * idy;
+	float t1y = (t1y_tmp < t2y_tmp) ? t1y_tmp : t2y_tmp;
+	float t2y = (t2y_tmp < t1y_tmp) ? t1y_tmp : t2y_tmp;
+
+	float t1z_tmp = (box.min.z - ray.o.z) * idz;
+	float t2z_tmp = (box.max.z - ray.o.z) * idz;
+	float t1z = (t1z_tmp < t2z_tmp) ? t1z_tmp : t2z_tmp;
+	float t2z = (t2z_tmp < t1z_tmp) ? t1z_tmp : t2z_tmp;
+
+	float t1 = (t1x < t1y) ? t1y : t1x;
+	      t1 = (t1z < t1 ) ? t1  : t1z;
+	float t2 = (t2x < t2y) ? t2x : t2y;
+	      t2 = (t2z < t2 ) ? t2z : t2;
+		
+	if (t1 > t2)        return false;
+	if (t2 < ray.t_min) return false;
+	if (t1 > ray.t_max) return false;
+	
+	is = t1;
+	return true;
 }
 
 
