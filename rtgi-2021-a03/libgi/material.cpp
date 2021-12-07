@@ -6,10 +6,20 @@
 using namespace glm;
 
 vec3 layered_brdf::f(const diff_geom &geom, const vec3 &w_o, const vec3 &w_i) {
+	// real world materials are neither perfectly specular or purely diffuse
+	// simple adding diff + spec is problematic as normalization is not easy
+	//vec3 diff = base->f(geom, w_o, w_i);
+	//vec3 spec = coat->f(geom, w_o, w_i);
+	//return diff+spec;
+	
+	
 	// todo proper fresnel reflection for layered material
 	vec3 diff = base->f(geom, w_o, w_i);
 	vec3 spec = coat->f(geom, w_o, w_i);
-	return diff+spec;
+
+	float R =  fresnel_dielectric(absdot(geom.ns, w_o), 1.0f, geom.mat->ior);
+
+	return (1-R)*diff+R*spec;
 }
 
 
@@ -21,10 +31,9 @@ vec3 lambertian_reflection::f(const diff_geom &geom, const vec3 &w_o, const vec3
 	//todo
 	//return vec3(0);
 
-	vec3 p=geom.albedo();
+ 	vec3 p=geom.albedo();
 	return p/pi;
 
-	
 }
 
 
@@ -34,23 +43,23 @@ vec3 phong_specular_reflection::f(const diff_geom &geom, const vec3 &w_o, const 
 	if (!same_hemisphere(w_i, geom.ng)) return vec3(0);
 	// todo
 
-	vec3 n=geom.ng; // in Lösung ns und nicht ng ?
-	vec3 w_r=2.0f*n*dot(w_i,n)-w_i;
-
-	float n_s=exponent_from_roughness(geom.mat->roughness);
-	float dot_wr_w_o=cdot(w_r,w_o);
-	float norm=(n_s+1.0f)*one_over_2pi;
-	float f_phong=norm*(powf(dot_wr_w_o,n_s));
+	//vec3 n=geom.ng; // in Lösung ns und nicht ng ?
+	//vec3 w_r=2.0f*n*dot(w_i,n)-w_i;
+	//float n_s=exponent_from_roughness(geom.mat->roughness);
+	//float dot_wr_w_o=cdot(w_r,w_o);
+	//float norm=(n_s+1.0f)*one_over_2pi;
+	//float f_phong=norm*(powf(dot_wr_w_o,n_s));
 
 
 	//Solution : 
-	//float exponent = exponent_from_roughness(geom.mat->roughness);
-	//vec3 r = 2.0f * geom.ns * dot(geom.ns, w_i) - w_i;
-	//float cos_theta = cdot(w_o, r);
-	//const float norm_f = (exponent + 2.0f) * one_over_2pi;
-	//return (coat ? vec3(1) : geom.albedo()) * powf(cos_theta, exponent) * norm_f * cdot(w_i,geom.ns);
+	//std::cout <<"werde benutzt"<<std::endl;
+	float exponent = exponent_from_roughness(geom.mat->roughness);
+	vec3 r = 2.0f * geom.ns * dot(geom.ns, w_i) - w_i;
+	float cos_theta = cdot(w_o, r);
+	const float norm_f = (exponent + 2.0f) * one_over_2pi;
+	return (coat ? vec3(1) : geom.albedo()) * powf(cos_theta, exponent) * norm_f * cdot(w_i,geom.ns); //modified phong brdf ? 
 
-	return vec3(0);
+	//return vec3(0);
 }
 
 

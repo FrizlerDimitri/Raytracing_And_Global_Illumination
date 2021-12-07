@@ -41,12 +41,37 @@ inline vec3 nextafter(const vec3 &from, const vec3 &d) {
 
 inline float fresnel_dielectric(float cos_wi, float ior_medium, float ior_material) {
     // check if entering or leaving material
+    //w_i=theta_i
+
     const float n1 = cos_wi < 0.0f ? ior_material : ior_medium;
     const float n2 = cos_wi < 0.0f ? ior_medium : ior_material;
     cos_wi = glm::clamp(glm::abs(cos_wi), 0.0f, 1.0f);
+
+
+
+    //Snell's Law : n1*sin(theta_i) = n2*sin(theta_t)
+    float theta_i=acos(cos_wi);
+    float theta_t=asin((n1/n2) *sin(theta_i));
+
+    if((n1/n2)* sin(theta_i)>=1.0f)
+    {
+        return 1.0f;
+    }
+
+    float R_s_top=n1*cos(theta_i)-n2*cos(theta_t);
+    float R_s_bottom=n1*cos(theta_i)+n2*cos(theta_t);
+    float R_s = pow(R_s_top/R_s_bottom ,2.0f);
+
+    float R_p_top=n1*cos(theta_t)-n2*cos(theta_i);
+    float R_p_bottom=n1*cos(theta_t)+n2*cos(theta_i);
+    float R_p = pow(R_s_top/R_s_bottom ,2.0f);
+
+    return (R_s+R_p)/2.0f;
+
+    
 	// todo fresnel term for dielectrics.
 	// make sure to handle internal reflection
-	return 0.0f;
+	//return 0.0f;
 }
 
 
